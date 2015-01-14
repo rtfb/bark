@@ -33,7 +33,7 @@ func CreateFile(file string) *Logger {
 //func CreateArgs(file *os.File, prefix string, flags int) *Logger {
 //}
 
-func (l *Logger) LogErr(err error, msg string, v ...interface{}) error {
+func (l *Logger) LogIff(err error, msg string, v ...interface{}) error {
 	if err == nil {
 		return nil
 	}
