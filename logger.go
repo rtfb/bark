@@ -44,7 +44,10 @@ func (l *Logger) LogErr(err error, msg string, v ...interface{}) error {
 	return err
 }
 
-func (l *Logger) Err(err error) error {
+func (l *Logger) LogIf(err error) error {
+	if err == nil {
+		return nil
+	}
 	l.l.Println(err.Error())
 	return err
 }
