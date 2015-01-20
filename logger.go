@@ -40,14 +40,17 @@ func (l *Logger) LogIff(err error, msg string, v ...interface{}) error {
 	if msg != "" {
 		l.l.Printf(msg, v...)
 	}
-	l.l.Println(err.Error())
-	return err
+	return l.Log(err)
 }
 
 func (l *Logger) LogIf(err error) error {
 	if err == nil {
 		return nil
 	}
+	return l.Log(err)
+}
+
+func (l *Logger) Log(err error) error {
 	l.l.Println(err.Error())
 	return err
 }
