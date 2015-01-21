@@ -39,3 +39,21 @@ if err != nil {
     return barkLog.LogIff(err, "Some error has occurred while doing %q", action)
 }
 ```
+
+If you only want to record a non-critical error and continue:
+
+```
+err := MaybeFailingAPI()
+if err != nil {
+    log.Println(err.Error)
+}
+Continue()
+```
+
+you can save some typing:
+
+```
+err := MaybeFailingAPI()
+barkLog.LogIf(err)
+Continue()
+```
