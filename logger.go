@@ -1,8 +1,14 @@
 package bark
 
 import (
+	"bytes"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"time"
+
+	"github.com/rtfb/httputil"
 )
 
 type Logger struct {
@@ -65,4 +71,16 @@ func (l *Logger) Println(v ...interface{}) {
 
 func (l *Logger) Printf(fmt string, v ...interface{}) {
 	l.l.Printf(fmt, v...)
+}
+
+func (l *Logger) LogRq(req *http.Request, startTime time.Time) {
+	var logEntry bytes.Buffer
+	duration := time.Now().Sub(startTime)
+	ip := httputil.GetIPAddress(req)
+	format := "%s - \033[32;1m %s %s\033[0m - %v"
+	fmt.Fprintf(&logEntry, format, ip, req.Method, req.URL.Path, duration)
+	if len(req.Form) > 0 {
+		fmt.Fprintf(&logEntry, " - \033[37;1mParams: %v\033[0m\n", req.Form)
+	}
+	l.l.Print(logEntry.String())
 }
