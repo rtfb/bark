@@ -28,7 +28,19 @@ func CreateFile(file string) *Logger {
 	if file != "" {
 		f, err := os.Create(file)
 		if err != nil {
-			panic("log.Create: " + err.Error())
+			panic("bark.CreateFile: " + err.Error())
+		}
+		writer = f
+	}
+	return &Logger{log.New(writer, "", defaultFlags)}
+}
+
+func AppendFile(file string) *Logger {
+	writer := os.Stderr
+	if file != "" {
+		f, err := os.OpenFile(file, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
+		if err != nil {
+			panic("bark.AppendFile: " + err.Error())
 		}
 		writer = f
 	}
