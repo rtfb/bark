@@ -27,34 +27,34 @@ func Create() *Logger {
 	}
 }
 
-func CreateFile(file string) *Logger {
+func CreateFile(file string) (*Logger, error) {
 	writer := os.Stderr
 	if file != "" {
 		f, err := os.Create(file)
 		if err != nil {
-			panic("bark.CreateFile: " + err.Error())
+			return nil, err
 		}
 		writer = f
 	}
 	return &Logger{
 		l:       log.New(writer, "", defaultFlags),
 		colored: false,
-	}
+	}, nil
 }
 
-func AppendFile(file string) *Logger {
+func AppendFile(file string) (*Logger, error) {
 	writer := os.Stderr
 	if file != "" {
 		f, err := os.OpenFile(file, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 		if err != nil {
-			panic("bark.AppendFile: " + err.Error())
+			return nil, err
 		}
 		writer = f
 	}
 	return &Logger{
 		l:       log.New(writer, "", defaultFlags),
 		colored: false,
-	}
+	}, nil
 }
 
 // TODO

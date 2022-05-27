@@ -13,7 +13,7 @@ func main() {
 	e := errors.New("induced")
 	l.Log(e)
 
-	l2 := bark.CreateFile("test.log")
+	l2, _ := bark.CreateFile("test.log")
 	req, _ := http.NewRequest(http.MethodGet, "/?q=foo", nil)
 	req.ParseForm()
 	l2.LogRq(req, time.Now())
