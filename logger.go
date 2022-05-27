@@ -56,7 +56,7 @@ func (l *Logger) LogIff(err error, msg string, v ...interface{}) error {
 		return nil
 	}
 	if msg != "" {
-		l.l.Printf(msg, v...)
+		l.l.Output(2, fmt.Sprintf(msg, v...))
 	}
 	return l.Log(err)
 }
@@ -69,20 +69,20 @@ func (l *Logger) LogIf(err error) error {
 }
 
 func (l *Logger) Log(err error) error {
-	l.l.Println(err.Error())
+	l.l.Output(2, err.Error())
 	return err
 }
 
 func (l *Logger) Print(v ...interface{}) {
-	l.l.Print(v...)
+	l.l.Output(2, fmt.Sprint(v...))
 }
 
 func (l *Logger) Println(v ...interface{}) {
-	l.l.Println(v...)
+	l.l.Output(2, fmt.Sprintln(v...))
 }
 
-func (l *Logger) Printf(fmt string, v ...interface{}) {
-	l.l.Printf(fmt, v...)
+func (l *Logger) Printf(format string, v ...interface{}) {
+	l.l.Output(2, fmt.Sprintf(format, v...))
 }
 
 func (l *Logger) LogRq(req *http.Request, startTime time.Time) {
@@ -94,5 +94,5 @@ func (l *Logger) LogRq(req *http.Request, startTime time.Time) {
 	if len(req.Form) > 0 {
 		fmt.Fprintf(&logEntry, " - \033[37;1mParams: %v\033[0m\n", req.Form)
 	}
-	l.l.Print(logEntry.String())
+	l.l.Output(2, logEntry.String())
 }
