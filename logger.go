@@ -12,7 +12,8 @@ import (
 )
 
 type Logger struct {
-	l *log.Logger
+	l       *log.Logger
+	colored bool
 }
 
 const (
@@ -20,7 +21,10 @@ const (
 )
 
 func Create() *Logger {
-	return &Logger{log.New(os.Stderr, "", defaultFlags)}
+	return &Logger{
+		l:       log.New(os.Stderr, "", defaultFlags),
+		colored: true,
+	}
 }
 
 func CreateFile(file string) *Logger {
@@ -32,7 +36,10 @@ func CreateFile(file string) *Logger {
 		}
 		writer = f
 	}
-	return &Logger{log.New(writer, "", defaultFlags)}
+	return &Logger{
+		l:       log.New(writer, "", defaultFlags),
+		colored: false,
+	}
 }
 
 func AppendFile(file string) *Logger {
@@ -44,7 +51,10 @@ func AppendFile(file string) *Logger {
 		}
 		writer = f
 	}
-	return &Logger{log.New(writer, "", defaultFlags)}
+	return &Logger{
+		l:       log.New(writer, "", defaultFlags),
+		colored: false,
+	}
 }
 
 // TODO
@@ -90,9 +100,16 @@ func (l *Logger) LogRq(req *http.Request, startTime time.Time) {
 	duration := time.Now().Sub(startTime)
 	ip := httputil.GetIPAddress(req)
 	format := "%s - \033[32;1m %s %s\033[0m - %v"
+	if !l.colored {
+		format = "%s - %s %s - %v"
+	}
 	fmt.Fprintf(&logEntry, format, ip, req.Method, req.URL.Path, duration)
 	if len(req.Form) > 0 {
-		fmt.Fprintf(&logEntry, " - \033[37;1mParams: %v\033[0m\n", req.Form)
+		format := " - \033[37;1mParams: %v\033[0m\n"
+		if !l.colored {
+			format = " - Params: %v\n"
+		}
+		fmt.Fprintf(&logEntry, format, req.Form)
 	}
 	l.l.Output(2, logEntry.String())
 }
